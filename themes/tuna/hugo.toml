@@ -1,0 +1,5 @@
+[markup.highlight]
+      lineNoStart = 0
+      lineNos = true
+      tabWidth = 4
+      noClasses = false

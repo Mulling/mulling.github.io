@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="{{- site.Language.Lang -}}">
+    <head>
+        {{- partial "head.html" . -}}
+    </head>
+    <body>
+        <div class="0x001">
+            <header class="0x0A0">
+                {{- partial "header.html" . -}}
+            </header>
+            <section class="0x0B0">
+                {{- block "main" . }}{{- end }}
+            </section>
+            <footer class="0x0C0">
+                <div class="title">
+                    <span class="title">
+                        SEE ALSO
+                    </span>
+                    <div class="sub-title">
+                        <p>
+                        {{ $currentPage := . }}
+                        {{ range .Site.Menus.main }}
+                            <a class="nav-main-item{{ if or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) (eq ($currentPage.Permalink) (.URL | absLangURL)) }} active{{end}}" href="{{ .URL | absLangURL }}" title="{{ .Title }}">{{ .Name }}</a>
+                        {{ end }}
+                        </p>
+                    </div>
+                </div>
+                <div class="footer">
+                    <span>{{ page.Title }}</span>
+                    <span>{{ page.Date.Format "2006 January 2" }}</span>
+                    <a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

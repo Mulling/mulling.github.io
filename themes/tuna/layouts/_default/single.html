@@ -1,0 +1,20 @@
+{{ define "main" }}
+<div class="title">
+    <span class="title">
+        NAME
+    </span>
+    <div class="sub-title">
+        <p>
+            {{ .Title }} -- {{ .Description }}
+        </p>
+    </div>
+</div>
+<div class="title">
+    <span class="title">
+        DESCRIPTION
+    </span>
+    <div class="sub-title">
+        {{ .Content }}
+    </div>
+</div>
+{{ end }}

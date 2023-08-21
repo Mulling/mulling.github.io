@@ -1,0 +1,18 @@
+name = "Tuna"
+license = "MIT"
+licenselink = "https://github.com/yourname/yourtheme/blob/master/LICENSE"
+description = ""
+homepage = "http://example.com/"
+tags = []
+features = []
+min_version = "0.116.1"
+
+[author]
+    name = "mulling"
+    homepage = "github.com/mulling"
+
+[markup.highlight]
+      lineNoStart = 0
+      lineNos = true
+      tabWidth = 4
+      noClasses = false

@@ -1,0 +1,66 @@
+baseURL = 'http://mulling.github.io'
+languageCode = 'en-us'
+title = 'mulling(4)'
+theme = 'tuna'
+
+[markup.highlight]
+    lineNoStart = 0
+    lineNos = true
+    tabWidth = 4
+    noClasses = false
+    codeFences = true
+
+pygmentsCodeFences=true
+
+[menu]
+    [[menu.main]]
+        identifier = "pages(7)"
+        name = "pages(7)"
+        url = "/pages/"
+        weight = 1
+    [[menu.main]]
+        identifier = "projects(3)"
+        name = "projects(3)"
+        url = "/projects/"
+        weight = 2
+    [[menu.main]]
+        identifier = "tuna(9)"
+        name = "tuna(9)"
+        url = "/tuna/"
+        weight = 3
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+series = "series"
+
+# For hugo >= 0.60.0, enable inline HTML
+[markup.goldmark.renderer]
+unsafe = true
+
+[markup]
+    [markup.tableOfContents]
+        startLevel = 2
+        endLevel   = 3
+        ordered    = true
+
+[privacy]
+    [privacy.vimeo]
+        disabled = false
+        simple   = true
+    [privacy.twitter]
+        disabled  = false
+        enableDNT = true
+        simple    = true
+    [privacy.instagram]
+        disabled = false
+        simple   = true
+    [privacy.youtube]
+        disabled        = false
+        privacyEnhanced = true
+
+[services]
+    [services.instagram]
+        disableInlineCSS = true
+    [services.twitter]
+        disableInlineCSS = true
