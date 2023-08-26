@@ -6,18 +6,19 @@ draft: true
 description: Seeking portability without clone(2).
 ---
 
-The POSIX standard often lacks in functionality for run-time isolation of dynamically bound symbols, i.e., `dlopen` and `dysym` can, and will, `SEGFAULT` your program. This means that programs that are extendable through plugins or use cryptographic APIs such as PKCS #11 are at mercy of library developers.
+The POSIX standard often lacks in functionality for run-time isolation of dynamically bound symbols, i.e., **dlopen** and **dlsym** can, and will, bring your program to ruin. Begin from symbol collision from statically compiled libraries (which can cause very hard to debug problems -- GNU developers even tried to fix this with the very tricky to use **dlmopen(2)**) to crashes from execution of dynamically loaded code. Meaning that programs that are extendable through plugins or use cryptographic API's such as PKCS #11 are at mercy of third-party developers.
 
 Take for instance this innocent program:
 ```c
 #include <stdio.h>
 
 void l() {
-    asm("hlt");
+    asm("hlt") // user-space illegal instruction
 }
+
 ```
 
-When the symbol `l` is loaded and executed, like bellow, your program will just SEGFAULT. One solution is to handle the signal, this case an illegal instruction, the downsides are: a) it may mask other problems; b) you often don't know which signals to handle, meaning you have to handle all the signals, which may cause other problems and limitations.
+When loaded and executed -- like below, the function **l** will just SEGFAULT our application. The are several ways you can treat cases like this, one solution is to handle the signal that is thrown **hlt** executed is  executed form user-space. This comes with several downsides, to name a few: a) it may mask other problems; b) you often don't know which signals to handle; c) behavior of the loaded code may change depending on version.
 
 ```c
 #include <dlfcn.h>
@@ -47,9 +48,11 @@ int main() {
 }
 ```
 
-Fortunately, the Linux kernel has a syscall that can help, `clone(2)`. A quick look in the man page reveals some useful information:
+Another problem is symbol collisions with statically compiled symbols,
 
-> By  contrast with fork(2), these system calls provide more precise control over what pieces of execution context are shared between the calling process and the child process.  For  example, using these system calls, the caller  can control whether or not the two processes share the virtual address space, the table of file descriptors, and the table of signal handlers.  These system calls  also  allow  the  new child process to be placed in separate namespaces(7). [...] When the child process is created with the clone() wrapper function, it commences execution by calling the function pointed to by the argument fn.  (This differs from fork(2), where execution continues in the child from the point of the fork(2) call.)  The arg argument is passed as the argument of the function fn.
+Fortunately, the Linux kernel has a **syscall** that can help, `clone(2)`. A quick look in the man page reveals some useful information:
+
+> By  contrast with fork(2), these system calls provide more precise control over what pieces of execution context are shared between the calling process and the child process.  For  example, using these system calls, the caller  can control whether or not the two processes share the virtual address space, the table of file descriptors, and the table of signal handlers.  These system calls  also  allow  the  new child process to be placed in separate namespaces(7). [...] When the child process is created with the clone() wrapper function, it commences execution by calling the function pointed to by the argument fn.  (This differs from fork(2), where execution continues in the child from the point of the fork(2) call.)  The arg argument is passed as the argument of the function fn. 
 
 
 Let's fix our program:

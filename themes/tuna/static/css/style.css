@@ -47,7 +47,7 @@ blockquote {
    font-style: italic;
 }
 
-span.quote {
+span .quote {
     display: block;
     text-align: right;
     margin-right: 4rem
@@ -55,11 +55,24 @@ span.quote {
 
 .footer {
     display: flex;
-    justify-content: space-between;
 }
 
-footer span {
-    text-align: center
+.footer > span:nth-child(1) {
+    justify-content: start;
+}
+
+.footer > span:nth-child(2) {
+    text-align: center;
+}
+
+.footer > span:nth-child(3) {
+    justify-content: end;
+}
+
+.footer > span {
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .sub-title {
