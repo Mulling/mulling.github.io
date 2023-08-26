@@ -6,7 +6,7 @@ draft: false
 description: Computer science and Kernel hacking.
 ---
 
-> I know the first three numbers <br><span class="quote"> -- Death Grips</span>
+> The mess we're in<br><span class="quote"> -- Armstrong, Joe</span>
 
 See [pages(7)](/pages) for a list of computer science related articles; in [projects(3)](/projects) you can find some cool projects.
 

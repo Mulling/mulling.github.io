@@ -47,7 +47,7 @@ blockquote {
    font-style: italic;
 }
 
-span .quote {
+span.quote {
     display: block;
     text-align: right;
     margin-right: 4rem
