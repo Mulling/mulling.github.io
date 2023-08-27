@@ -160,7 +160,7 @@ child status 0
 We can remediate this by requesting a new namespace with **dlmopen(3)**. To quote to man pages for **dlmopen(3)**:
 > The dlmopen() function differs from dlopen() primarily in that it accepts an additional argument, lmid, that specifies the link-map list (also referred to as a namespace) in which the shared object should be loaded.
 
-Calling **dlmopen(3)** with **LM_ID_NEWLM** will bind the DSO symbols to a new, empty, link-map list. Changing line 16 of our main block of code to: {{<highlight c "linenos=inline,hl_inline=true">}}void* handle = dlmopen(LM_ID_NEWLM, "./lib.so", RTLD_NOW){{</highlight>}}, now, the child's file descriptor table is not accessible in the new namespace, cool. **dlmopen(3)** comes however with hole new set of problems with symbols that are shared across namespaces. https://sourceware.org/bugzilla/show_bug.cgi?id=24776
+Calling **dlmopen(3)** with **LM_ID_NEWLM** will bind the DSO symbols to a new, empty, link-map list. Changing line 16 of our main block of code to: {{<highlight c "linenos=inline,hl_inline=true">}}void* handle = dlmopen(LM_ID_NEWLM, "./lib.so", RTLD_NOW){{</highlight>}}, now, the child's file descriptor table is not accessible in the new namespace, cool. **dlmopen(3)** comes however with hole new set of problems with symbols that are shared across namespaces, See: [pthread_key_create, pthread_setspecific are incompatible with dlmopen](https://sourceware.org/bugzilla/show_bug.cgi?id=24776).
 
 Tangentially, **RTLD_DEEPBIND** can be used to place the DSO symbols in another link-map list, with priority over the global symbols table, but, parent data can still be read. We still need to exec...
 
