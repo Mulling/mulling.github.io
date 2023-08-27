@@ -131,85 +131,85 @@ span.quote {
     white-space: pre;
 }
 
-.chroma .hl {
+.hl {
     background-color: #ffffcc
 }
 
-.chroma .bp  { }
-.chroma .c   { color: #756B61 }
-.chroma .c1  { color: #756B61 }
-.chroma .ch  { color: #756B61 }
-.chroma .cl  { }
-.chroma .cm  { color: #756B61 }
-.chroma .cp  { color: #EDB32D }
-.chroma .cpf { color: #EDB32D }
-.chroma .cs  { color: #756B61 }
-.chroma .dl  { color: #88B625 }
-.chroma .err { }
-.chroma .fm  { }
-.chroma .g   { }
-.chroma .gd  { color: #1D2021 }
-.chroma .ge  { color: #83a598 }
-.chroma .gh  { color: #b8bb26 }
-.chroma .gi  { color: #1D2021 }
-.chroma .gl  { }
-.chroma .go  { color: #504945 }
-.chroma .gp  { }
-.chroma .gr  { }
-.chroma .gs  { }
-.chroma .gt  { }
-.chroma .gu  { color: #b8bb26 }
-.chroma .il  { color: #D6C9A4 }
-.chroma .k   { color: #D66E12 }
-.chroma .kc  { color: #D66E12 }
-.chroma .kd  { color: #D66E12 }
-.chroma .kn  { color: #D66E12 }
-.chroma .kp  { color: #D66E12 }
-.chroma .kr  { color: #D66E12 }
-.chroma .kt  { color: #83A598 }
-.chroma .l   { }
-.chroma .ld  { }
-.chroma .lin e { display: flex; }
-.chroma .m   { color: #D6C9A4 }
-.chroma .mb  { color: #D6C9A4 }
-.chroma .mf  { color: #D6C9A4 }
-.chroma .mh  { color: #D6C9A4 }
-.chroma .mi  { color: #D6C9A4 }
-.chroma .mo  { color: #D6C9A4 }
-.chroma .n   { }
-.chroma .na  { color: #D66E12 }
-.chroma .nb  { color: #D3869B }
-.chroma .nc  { }
-.chroma .nd  { }
-.chroma .ne  { color: #000 }
-.chroma .nf  { color: #EDB32D }
-.chroma .ni  { color: #EDB32D }
-.chroma .nl  { color: #fb4934 }
-.chroma .nn  { }
-.chroma .no  { color: #d3869b }
-.chroma .nt  { color: #fb4934 }
-.chroma .nv  { }
-.chroma .nx  { }
-.chroma .o   { color: #D6C9A4 }
-.chroma .ow  { color: #D6C9A4 }
-.chroma .p   { }
-.chroma .py  { }
-.chroma .s   { color: #88B625 }
-.chroma .s1  { color: #88B625 }
-.chroma .s2  { color: #88B625 }
-.chroma .sa  { color: #88B625 }
-.chroma .sb  { color: #88B625 }
-.chroma .sc  { color: #88B625 }
-.chroma .sd  { color: #88B625 }
-.chroma .se  { color: #88B625 }
-.chroma .sh  { color: #88B625 }
-.chroma .si  { color: #88B625 }
-.chroma .sr  { color: #88B625 }
-.chroma .ss  { color: #83a598 }
-.chroma .sx  { color: #88B625 }
-.chroma .vc  { }
-.chroma .vg  { }
-.chroma .vi  { }
-.chroma .vm  { }
-.chroma .w   { }
-.chroma .x   { }
+.bp  { }
+.c   { color: #756B61 }
+.c1  { color: #756B61 }
+.ch  { color: #756B61 }
+.cl  { }
+.cm  { color: #756B61 }
+.cp  { color: #EDB32D }
+.cpf { color: #EDB32D }
+.cs  { color: #756B61 }
+.dl  { color: #88B625 }
+.err { }
+.fm  { }
+.g   { }
+.gd  { color: #1D2021 }
+.ge  { color: #83a598 }
+.gh  { color: #b8bb26 }
+.gi  { color: #1D2021 }
+.gl  { }
+.go  { color: #504945 }
+.gp  { }
+.gr  { }
+.gs  { }
+.gt  { }
+.gu  { color: #b8bb26 }
+.il  { color: #D6C9A4 }
+.k   { color: #D66E12 }
+.kc  { color: #D66E12 }
+.kd  { color: #D66E12 }
+.kn  { color: #D66E12 }
+.kp  { color: #D66E12 }
+.kr  { color: #D66E12 }
+.kt  { color: #83A598 }
+.l   { }
+.ld  { }
+.lin e { display: flex; }
+.m   { color: #D6C9A4 }
+.mb  { color: #D6C9A4 }
+.mf  { color: #D6C9A4 }
+.mh  { color: #D6C9A4 }
+.mi  { color: #D6C9A4 }
+.mo  { color: #D6C9A4 }
+.n   { }
+.na  { color: #D66E12 }
+.nb  { color: #D3869B }
+.nc  { }
+.nd  { }
+.ne  { color: #000 }
+.nf  { color: #EDB32D }
+.ni  { color: #EDB32D }
+.nl  { color: #fb4934 }
+.nn  { }
+.no  { color: #d3869b }
+.nt  { color: #fb4934 }
+.nv  { }
+.nx  { }
+.o   { color: #D6C9A4 }
+.ow  { color: #D6C9A4 }
+.p   { }
+.py  { }
+.s   { color: #88B625 }
+.s1  { color: #88B625 }
+.s2  { color: #88B625 }
+.sa  { color: #88B625 }
+.sb  { color: #88B625 }
+.sc  { color: #88B625 }
+.sd  { color: #88B625 }
+.se  { color: #88B625 }
+.sh  { color: #88B625 }
+.si  { color: #88B625 }
+.sr  { color: #88B625 }
+.ss  { color: #83a598 }
+.sx  { color: #88B625 }
+.vc  { }
+.vg  { }
+.vi  { }
+.vm  { }
+.w   { }
+.x   { }

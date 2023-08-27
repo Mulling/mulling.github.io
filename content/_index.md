@@ -3,7 +3,7 @@ author: "Mülling"
 title: "mulling(4)"
 date: 2023-08-17T01:25:40-03:00
 draft: false
-description: Computer science and Kernel hacking.
+description: Kernel hacking for fun.
 ---
 
 > The mess we're in<br><span class="quote"> -- Armstrong, Joe</span>

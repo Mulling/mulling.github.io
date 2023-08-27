@@ -1,5 +1,4 @@
 <title>{{ with .Title }}{{ . }} &ndash; {{end}}{{ .Site.Title }}</title>
-{{ with .Site.Params.about }}<meta name="description" content="{{ .description }}">{{ end }}
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="UTF-8"/>
@@ -8,19 +7,17 @@
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 
 <!-- Google / Search Engine Tags -->
-<meta itemprop="name" content="mulling(4)">
-<meta itemprop="description" content="Kernel hacking for fun">
-<meta itemprop="image" content="assets/tuna.png">
-
+<meta itemprop="image" content="{{ .Site.BaseURL }}assets/tuna.png">
+<meta name="description" content="{{ .Description }}">
 <!-- Facebook Meta Tags -->
 <meta property="og:url" content="https://mulling.github.io">
 <meta property="og:type" content="website">
-<meta property="og:title" content="mulling(4)">
-<meta property="og:description" content="Kernel hacking for fun">
+<meta property="og:title" content="{{ with .Title }}{{ . }} &ndash; {{end}}{{ .Site.Title }}">
+<meta property="og:description" content="{{ .Description }}">
 <meta property="og:image" content="assets/tuna.png">
 
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="mulling(4)">
-<meta name="twitter:description" content="Kernel hacking for fun">
+<meta name="twitter:title" content="{{ with .Title }}{{ . }} &ndash; {{end}}{{ .Site.Title }}">
+<meta name="twitter:description" content="{{ .Description }}">
 <meta name="twitter:image" content="assets/tuna.png">
