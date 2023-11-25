@@ -28,7 +28,6 @@ body {
 }
 
 .chroma {
-    overflow-x: scroll;
     overflow-y: hidden;
 }
 

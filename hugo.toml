@@ -10,7 +10,6 @@ theme = 'tuna'
     noClasses = false
     codeFences = true
 
-pygmentsCodeFences=true
 
 [menu]
     [[menu.main]]
