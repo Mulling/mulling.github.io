@@ -6,9 +6,11 @@ draft: false
 description: Sandboxing of dinamicaly bound symbols.
 ---
 
-The POSIX standard lacks in functionality for run-time isolation of dynamically bound symbols, i.e., **dlopen** and **dlsym** can, and will, crash your programs. Being from symbol collision from statically (and dynamic) compiled libraries with other dynamic object symbols, to crashes from execution of dynamically loaded code. Meaning, programs that are extendable through plugins or use cryptographic API's such as PKCS #11 are at mercy of third-party developers.
+*Disclaimer: If you are looking for a solution for the problem stated on the title, this ain't it yet.*
 
-Library interoperability of dynamic shared objects (DSO's) which link against anything that uses **pthreads** or **glibc** is delicate at best. **glibc** developers tried to fix this with **dlmopen(2)** and previously with **RTLD_DEEPBIND**, which most likely will also crash your programs (this will make more sense later on).
+The POSIX standard lacks in functionality for run-time isolation of dynamically bound symbols, i.e., **dlopen** and **dlsym** can, and will, crash your programs. Being from symbol collision from statically (and dynamic) compiled libraries with other DSO, to crashes from execution of dynamically loaded code. Meaning, programs that are extendable through plugins or use cryptographic API's such as PKCS #11 are at mercy of third-party developers.
+
+Library interoperability of dynamic shared objects (DSO's) which link against anything that uses **pthreads** or **glibc** is delicate at best. The linker might also burn everything down when resolving weak symbols, this might happen if something depends of different versions of the same DSO. **glibc** developers tried to fix this with **dlmopen(2)** and previously with **RTLD_DEEPBIND**, which most likely will also crash your programs, tho, less (this will make more sense later on).
 
 Take for instance the program bellow, function {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}} calls an illegal user-space instruction, terminating the program:
 ```c
@@ -18,7 +20,7 @@ void foo() {
 ```
 Let's turn our program into a shared library:
 ```shell {linenos=false}
-$ gcc -shared l.c -o l.so
+$ gcc -shared l.c -o l.so -fpic
 ```
 Now, we can load the DSO with {{< highlight c "linenos=inline,hl_inline=true" >}}dlopen("./lib.so", RTLD_NOW){{< / highlight >}} and bind the symbol to a local function pointer with {{< highlight c "linenos=inline,hl_inline=true" >}}void (*foo)() = dlsym(handle, "foo"){{< / highlight >}}. See below:
 ```c
@@ -50,11 +52,11 @@ Building and running:
 ```shell {linenos=false}
 $ gcc -o main main.c
 $ ./main
-Segmentation fault
+Segmentation fault # cool
 ```
 As hinted before, the question here is, how can we safely call {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}}, without it terminating our program? There's also the problem of unloading the shared library, non-static objects lifetimes (i.e. a thread created by the DSO) also makes impossible for one to call **dlclose(3)** on unknown shared objects, that road leads to undefined behaviour.
 
-The common paradigm is to **fork(2)** **exec(3)**, perform the dynamic binding work in the child, and subsequently, kill the child. Evidently, two binaries are necessary, this can be achieved by means of embedding one binary in another and using **memfd_create(2)** + **fexecve(2)**; or by loading a binary form a file and **fexecve(2)** it (this is necessary to verify the hash). Of course, this is also not portable.
+The common paradigm is to **fork(2)** **exec(3)**, perform the dynamic binding work in the child, and subsequently, kill the child. Evidently, two binaries are necessary, this can be achieved by means of embedding one binary in another and using **memfd_create(2)** + **fexecve(2)**; or by loading a binary form a file and **fexecve(2)'ing** it (this is necessary to verify the hash, but no one cares about that). Of course, this is also not portable.
 
 Let's explore what happens if we try to deviate from this (we won't dive into the problems with multithreaded programs and **fork(2)**). To **fork(2)**, without **exec(3)**, and load the DSO. Bellow is an assert of that (for brevity, from now on, I've omitted all the error handling code):
 ```c
@@ -88,7 +90,7 @@ Ok, we've got what we wanted, but, our program now resides at the limbo between 
 
 > The child inherits copies of the parent's set of open file descriptors.  Each file descriptor in the child refers to the same open file description   (see open(2)) as the corresponding file descriptor in the parent. This means that the two file descriptors share open file status flags, file offset, and signal-driven I/O attributes [...]
 
-This also happens if files are not marked with **FD_CLOEXEC** prior to **exec(3)**. Yes, we can do anything we want with the parents file descriptors, and if we are clever, structures in memory also ;). This is also true even if we didn't fork at all. Making some changes to our shared library to test the former.
+This will also happen if files are not marked with **FD_CLOEXEC** prior to **exec(3)**. Yes, we can do anything we want with the parents file descriptors, and if we are clever, structures in memory also ;). This is also true even if we didn't fork at all. Making some changes to our shared library to test the former.
 ```c
 #include <fcntl.h>
 #include <stdio.h>
@@ -205,6 +207,6 @@ int main() {
     return 0;
 }
 ```
-The first step is allocate a stack for your fat thread, this is done with {{<highlight c "linenos=inline,hl_inline=true">}}mmap(NULL, 1024 << 10, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0){{</highlight>}}. The important bits are **PROT_READ**, **PROT_WRITE**, **MAP_PRIVATE**, and **MAP_ANONYMOUS**. Contrary of common sense, **MAP_STACK** does nothing. Now, calling {{<highlight c "linenos=inline,hl_inline=true">}}clone(fn, (t = s + (1024 << 10)), SIGCHLD, NULL){{</highlight>}}. The important bits for clone are **SIGCHLD**, so the parent can know when the fat thread terminates. This seems to solve our problems, but, in the end, we are essentially forking... And, again, we still need to exec... There is no way for the current Linux linker/loader to pull only the needed symbols when cloning. The whole image is copied over. For a hack, the binary could be made into a executable DSO, loaded lazily with **dlmopen(3)** + **RTLD_LAZY**, then DSO binding performed inside the empty namespace.
+The first step is allocate a stack for your fat thread, this is done with {{<highlight c "linenos=inline,hl_inline=true">}}mmap(NULL, 1024 << 10, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0){{</highlight>}}. The important bits are **PROT_READ**, **PROT_WRITE**, **MAP_PRIVATE**, and **MAP_ANONYMOUS**. Contrary of common sense, **MAP_STACK** does nothing. Now, calling {{<highlight c "linenos=inline,hl_inline=true">}}clone(fn, (t = s + (1024 << 10)), SIGCHLD, NULL){{</highlight>}}. The important bits for clone are **SIGCHLD**, so the parent can know when the fat thread terminates, I'm calling it fat thread, that is the point of this whole thing... This seems to solve our problems, but, in the end, we are essentially forking... And, again, we still need to exec... There is no way for the current Linux linker/loader to pull only the needed symbols when cloning. The whole image is copied over. For a hack, the binary could be made into a executable DSO, loaded lazily with **dlmopen(3)** + **RTLD_LAZY**, then DSO binding performed inside the empty namespace.
 
-Ideally we need fork + exec isolation capabilities that only binds the needed dependencies of the entry point, I think the eBPF loader does this, we shall investigate this soon, stay tuned.
+Ideally we need fork + exec isolation capabilities that only binds the needed dependencies of the entry point -- that being, fn. This means, we only need fn() and the whole cocofoni of things it bring from glibc (I would put a puke emoji here if could). The initial ideal here was to hack something together to allow the Kernel to do that, but I haven't gotten to that YET.
