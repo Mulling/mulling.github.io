@@ -255,7 +255,7 @@ $ top -b | grep -e "PID|st-static"
 
 We can see a significant decrease in resident memory usage -- RES, about half. Summing things up in the table below (take the values shown here for what they are). I'll leave the conclusions as an exercise to the reader, there are trade-offs and we are only looking at a single binary, but the benefits are there. There are also arguments that can be made about the security of DSO's and how to deploy security patches to static linked code, but they fall short of the scope of this article.
 
-```
+```shell {linenos=false}
             +--------------------------+------- +-----------+
             |                          | st-dyn | st-static |
             +--------------------------+------- +-----------+

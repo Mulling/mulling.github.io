@@ -74,12 +74,16 @@ span.quote {
     justify-content: center;
 }
 
-.sub-title {
-    margin: 0rem 0rem 0rem 2rem
+@media only screen and (min-width: 46rem) {
+    .sub-title {
+        margin: 0rem 0rem 0rem 2rem
+    }
 }
 
-.sub-sub-title {
-    margin: 0rem 0rem 0rem 2rem
+@media only screen and (min-width: 46rem) {
+    .sub-sub-title {
+        margin: 0rem 0rem 0rem 2rem
+    }
 }
 
 .bg {
