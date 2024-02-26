@@ -6,16 +6,16 @@ draft: false
 description: "ldd: not a dynamic executable."
 ---
 
-The current fragmentation of Linux desktop environments (and servers to some extend) is further aggravated by the fact that dynamic linkage is, **today**, the norm. A relic from the times where disk space, memory, and instructions where a sparse commodity. Back in the day, there were only static binaries, everything you needed to run your program was there, binary file formats where practically non-existent and one would simply map the program into memory, set the start address and the program would run. This, however, caused a problem when time sharing became a thing; suddenly, programs would compete for the precious machine resources. One of those was space. It did not take long for people to realize that code was duplicated -- people where reusing the same routines and functions -- and could be made reusable. And when virtual memory became a thing, shared between the processes. The concept of dynamic shared libraries was then born.
+The current fragmentation of Linux desktop environments (and servers to some extend) is further aggravated by the fact that dynamic linkage is, **today**, the norm. A relic from the times where disk space, memory, and machine instructions where a sparse commodity. Back when there where only static binaries, everything you needed to run your program was there, binary file formats where practically non-existent and one would simply map the program into memory. Set the start address and the program runs. This, however, caused a problem when time sharing became a thing; suddenly, programs would compete for the precious machine resources. One of those was space. It did not take long for people to realize that code could be reused. And when virtual memory became a thing, shared between the processes. The concept of dynamic shared libraries was then born.
 
-Dynamic shared libraries solved the problem of code reuse in the resource constraint environments of the time. Today, however, the constraints have shifted; we are no longer bound by limited memory, disk space or how many instructions the CPU can chug in a second. We have, however, high heterogeneity between platforms, distributions, architectures, and features.
+Dynamic shared libraries solved the problem of code reuse in the resource constraint environments of the time. Today, however, the constraints have shifted; we are no longer bound by limited memory, disk space or how many instructions the CPU can chug in a second. We have, however, high heterogeneity between platforms, distributions, architectures, and architecture features.
 
 > <b>The Problem: How to use ones binary on another computer</b>?
 
-This problem has been discussed [several times](https://drewdevault.com/dynlib.html), by several people, and at this point also proves the cave-allegory. It also serves to show a growing trend in the today's software industry, of solving problems with bigger problems. Let's start with the more idiotic solutions, going down to the more sensible ones.
+This problem has been discussed [several times](https://drewdevault.com/dynlib.html), by [several people](https://news.ycombinator.com/item?id=23654353), and at this point also proves [the cave-allegory](https://en.wikipedia.org/wiki/Allegory_of_the_cave). It also serves to show a growing trend in the today's software industry, of solving problems with bigger problems. Let's start with the more idiotic solutions, going down to the more sensible ones.
 
-* Snap Packages: One of the sewage spill's from Canonical (the guys that make Ubuntu and [a bunch of annoying questions](https://ubuntu.com/blog/written-interviews)). Snap packages require a lot of infrastructure to be present in the host system to even work. That includes a **daemon(3)**, xdg-desktop extensions, kernel modules, and more. Snaps are also tightly coupled to the Ubuntu ecosystem. The masses, however seem to dislike snap for other reasons, mainly, the size of snap packages, they however are not bothered by the gigabytes of debug-info cargo just dumped in their home directories. This furthers eludes to the point above. Snap packages are not a terrible idea because they bundle all of the necessary moving parts of the program, but, because of the other problems they introduce. [^1]
-* Flatpaks: Self entitled <i>"the future of application distribution"</i>. Flatpaks are similar to Snaps, but, less bad, i.e., they use the Linux namespaces for sandboxing, opposed to reinventing the wheel like Snaps do with AppArmor.
+* Snap Packages: One of the sewage spill's from Canonical (the guys that make Ubuntu and [a bunch of annoying questions](https://ubuntu.com/blog/written-interviews)). Described as: <i>"Snaps are a secure and scalable way to embed applications on Linux devices. A snap is an application containerised with all its dependencies. A snap can be installed using a single command on any device running Linux. With snaps, software updates are automatic and resilient. Applications run fully isolated in their own sandbox, thus minimising security risks."</i> Snap packages require a lot of infrastructure to be present in the host system to even work. That includes a **daemon(3)**, xdg-desktop extensions, kernel modules, and more. Snaps are also tightly coupled to the Ubuntu ecosystem. People, however, seem to dislike snap for other reasons, mainly, the size of snap packages (They however are not bothered by the gigabytes of debug-info cargo just dumped in their home directories). This furthers eludes to the point above. Snap packages are not a terrible idea because they bundle all of the necessary moving parts of the program, but, because of the other problems they introduce. [^1]
+* Flatpaks: Self entitled <i>"the future of application distribution"</i>. Flatpaks are similar to Snaps, but, less bad, i.e., they use the Linux namespaces for sandboxing, opposed to reinventing the wheel like Snaps do with AppArmor. Still a terrible idea for package distribution.
 * AppImages: Is a self-sufficient runtime that bundles the program dependencies and does not depend on any host machinery to work (they kinda do since the runtime is dynamically linked against glibc, but let's ignore that for now).
 * Package everything yourself (also known as static linking with extra steps): This one is similar to the idea of AppImages, but, instead, you do the hard work.
 * Static linking: Just static link everything. Will work everywhere, most of the time (we will talk more about this in the future).
@@ -30,7 +30,7 @@ As a practical exercise let's compare a dynamic and a static version of the same
 
 Source code and instructions on how to compile each version can be found [here](https://github.com/Mulling/st). I further encourage the reader to do so and share the static version with their friends, just like the 60's.
 
-Lets analyse the first version, dynamic linked st -- st-dyn:
+Lets analyse the first version, dynamic linked st -- st-dyn. Below is the output of **ldd(1)**, which displays all the dynamic dependencies of a program:
 
 ```shell {linenos=false}
 $ ldd st-dyn
@@ -58,7 +58,7 @@ libbrotlicommon.so.1 => /usr/lib/libbrotlicommon.so.1 (0x00007f2ce5eb5000)
 libpcre2-8.so.0 => /usr/lib/libpcre2-8.so.0 (0x00007f2ce5e1a000)
 ```
 
-We see a decent amont of dynamic dependencies. Next, let's run **pmap(1)**. **pmap(1)** is basically a pretty printer for /proc/\<pid\>/smaps which shows memory cosumption of each memory mapping and flags.
+We see a decent amount of dynamic dependencies. Next, let's run **pmap(1)**. **pmap(1)** is basically a pretty printer for /proc/\<pid\>/smaps which shows memory cosumption of each memory mapping and flags.
 
 ```shell {linenos=false}
 $ pmap -d $(pidof st-dyn)
@@ -209,9 +209,9 @@ ffffffffff600000       4 --x-- 0000000000000000 000:00000   [ anon ]
 mapped: 17940K    writeable/private: 2380K    shared: 1132K
 ```
 
-What we can take form this is that our dynamic version of st mapped 17940K (17Mb) of which 2380K is private data -- memory that the terminal is using, and only 1132K is shared data.
+What we can take form this is that our dynamic version of st mapped 17940K (17Mb) of which 2380K is private data -- memory that the terminal is using, and only 1132K is shared data. It is also interesting to see what pages are code, marked `r-x--`; which ones are data, marked `r----` or `rw---`. We also see a few fonts that Xft mapped for us to use.
 
-Now, let's look at the static version -- st-static:
+Now, let's look at the static version -- st-static, first running **pmap(1)**:
 ```shell {linenos=false}
 $ pmap -d $(pidof st-static)
 8327:   ./st-static
@@ -236,9 +236,9 @@ ffffffffff600000       4 --x-- 0000000000000000 000:00000   [ anon ]
 mapped: 7364K    writeable/private: 2308K    shared: 1068K
 ```
 
-We see a decrease in mapped memory usage, 7364K. Private data remain mostly the same and shared data follows this as well. This however does not paint the hole picture.
+We can see a LOT fewer pages mapped, of which only 3 are `r-x--` -- executable. We can also see the same mapped fonts as the dynamic version. There's also a decrease in mapped memory usage, 7364K. Private data remain mostly the same and shared data follows this as well. This however does not paint the hole picture.
 
-Let's look at the output of **top(1)**, first for st-dyn.
+Let's look at the output of **top(1)**, first for st-dyn. **top(1)** will give us a different metrics, since it account memory usage differently. It also will show us resident memory use -- which more closely matches what you would expect for the program memory usage.
 
 ```shell {linenos=false}
 $ top -b | grep -e "PID|st-dyn"
@@ -256,17 +256,17 @@ $ top -b | grep -e "PID|st-static"
 We can see a significant decrease in resident memory usage -- RES, about half. Summing things up in the table below (take the values shown here for what they are). I'll leave the conclusions as an exercise to the reader, there are trade-offs and we are only looking at a single binary, but the benefits are there. There are also arguments that can be made about the security of DSO's and how to deploy security patches to static linked code, but they fall short of the scope of this article.
 
 ```shell {linenos=false}
-            +--------------------------+------- +-----------+
-            |                          | st-dyn | st-static |
-            +--------------------------+------- +-----------+
-            | size of the binary       |   113K |     3236K |
-            | VIRT (top)               | 17936K |     7360K |
-            | RES (top)                | 10368K |     5048K |
-            | SHR (top)                |  8064K |     3328K |
-            | mapped (pmap)            | 17940K |     7364K |
-            | writeable/private (pmap) |  2380K |     2308K |
-            | shared (pmap)            |  1132K |     1068K |
-            +--------------------------+------- +-----------+
++--------------------------+------- +-----------+
+|                          | st-dyn | st-static |
++--------------------------+------- +-----------+
+| size of the binary       |   113K |     3236K |
+| VIRT (top)               | 17936K |     7360K |
+| RES (top)                | 10368K |     5048K |
+| SHR (top)                |  8064K |     3328K |
+| mapped (pmap)            | 17940K |     7364K |
+| writeable/private (pmap) |  2380K |     2308K |
+| shared (pmap)            |  1132K |     1068K |
++--------------------------+------- +-----------+
 ```
 
-[^1]: Take for instance the communication between browser extensions and a native modules (you have likely used this feature if you have installed a gnome shell extension), normally, communication between browser and the native module happens using a simple **stdin(3)** to **stdout(3)** **pipe(3)**. With snaps, however, communication has to go trough the xdg-desktop-portal -- dbus(1), meaning, in the end, they are not portable. If your system is older and has an older version of xdg-desktop-portal that does not support the protocol which handles browser to native module communication, it simply won't work. Snaps are broken, and they break what they package. If you want to see this for yourself, try to use a PKCS #11 token in Snap Firefox.
+[^1]: For instance -- in snap packages -- the communication between browser extensions and a native modules happens through the xdg-desktop-portal. Normally, communication between browser and the native module happens using a simple **stdin(3)** to **stdout(3)** **pipe(3)**. If your system is older and has an older version of xdg-desktop-portal that does not support the protocol which handles browser to native module communication, it simply won't work. Snaps are broken, and they break what they package. If you want to see this for yourself, try to use a PKCS #11 token in Snap Firefox.
