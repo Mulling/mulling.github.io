@@ -1,6 +1,6 @@
 ---
 author: "Mülling"
-title: "fat_threads(3)"
+title: "fat-threads(3)"
 date: 2023-08-27T17:27:19-03:00
 draft: false
 description: Sandboxing of dinamicaly bound symbols.

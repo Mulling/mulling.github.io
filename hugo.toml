@@ -1,6 +1,6 @@
 baseURL = 'http://mulling.github.io'
 languageCode = 'en-us'
-title = 'mulling(4)'
+title = 'Kernel Hacking(7)'
 theme = 'tuna'
 
 [markup.highlight]
@@ -13,9 +13,9 @@ theme = 'tuna'
 
 [menu]
     [[menu.main]]
-        identifier = "pages(7)"
-        name = "pages(7)"
-        url = "/pages/"
+        identifier = "guides(7)"
+        name = "guides(7)"
+        url = "/guides/"
         weight = 1
     [[menu.main]]
         identifier = "projects(3)"
@@ -23,9 +23,9 @@ theme = 'tuna'
         url = "/projects/"
         weight = 2
     [[menu.main]]
-        identifier = "tuna(9)"
-        name = "tuna(9)"
-        url = "/tuna/"
+        identifier = "tks(9)"
+        name = "tks(9)"
+        url = "/tks/"
         weight = 3
 
 [taxonomies]

@@ -20,9 +20,7 @@
         {{ range .Pages }}
         <a href="{{ .Permalink }}">{{ .Title }}</a>
         <div class="sub-sub-title">
-            <span class="date">
-                {{ .Date.Format "2006 January 2" }}
-            </span> - {{ .Description }}
+            {{ .Description }}
         </div>
         <br>
         {{ end }}

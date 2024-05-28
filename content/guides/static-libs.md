@@ -1,6 +1,6 @@
 ---
-author: "Mülling"
-title: "static_libs(2)"
+author: "mulling"
+title: "static-libs(2)"
 date: 2024-02-20T23:31:05-03:00
 draft: false
 description: "ldd: not a dynamic executable."

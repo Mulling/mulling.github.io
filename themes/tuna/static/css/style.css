@@ -8,9 +8,9 @@
     font-family: Consolas;
 }
 
-a:active  { color: #D6C9A4 }
-a:link    { color: #D6C9A4 }
-a:visited { color: #D6C9A4 }
+a:active  { color: #EDB32D }
+a:link    { color: #EDB32D }
+a:visited { color: #EDB32D }
 
 
 span.title {
@@ -27,6 +27,15 @@ body {
     padding: .5rem;
 }
 
+.head {
+    color: #EDB32D;
+}
+
+.tail {
+    color: #D66E12;
+}
+
+
 .chroma {
     overflow-y: hidden;
 }
@@ -34,12 +43,6 @@ body {
 nav {
     display: flex;
     justify-content: space-between;
-}
-
-nav span {
-    text-align: center;
-    margin-left:  1rem;
-    margin-right: 1rem;
 }
 
 blockquote {
