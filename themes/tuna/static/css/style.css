@@ -46,7 +46,12 @@ nav {
 }
 
 blockquote {
-   font-style: italic;
+    font-style: italic;
+}
+
+div.table {
+    display: flex;
+    justify-content: center;
 }
 
 span.quote {
