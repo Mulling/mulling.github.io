@@ -20,9 +20,7 @@ In all cases we see that all dependencies need to be in the final bundle -- in t
 
 > <b>The future is the past, now!</b>
 
-There are two reasons that I can think static linkage is not more common today. The first one is that most applications depend on glibc, which is a pain to statically link. The second one is a misconception on how dynamic linked libraries work, if compiled with position independent code libraries can be mapped into memory and pages shared between processes, if not, text relocation takes place and that does not hold true; the problem is, however, that the program will end-up using only a few symbols from the hole mapped page, i.e., you pay for what you don't use.
-
-A third argument could be made that updating existent tooling and build systems to support static linkage or new binary file formats is too costly, but I do think it could be done gradually.
+There are two reasons that I can think static linkage is not more common today. The first one is that most applications depend on glibc, which is a pain to statically link. The second one is a misconception tha static linked programs will use more disk space and memory. A third argument could be made that updating existent tooling and build systems to support static linkage or new binary file format is too costly.
 
 As a practical exercise let's compare a dynamic and a static version of the same application. The application we are going to compare is **st(1)**, a simple terminal that is complex enough to have a decent amount of dynamic dependencies. For the comparison we are going to use **ldd(1)**, **pmap(1)**, and **top(1)**, and are mainly going to be looking at memory mappings and memory usage.
 
