@@ -6,19 +6,26 @@ draft: false
 description: "ldd: not a dynamic executable."
 ---
 
-> <b>The Problem: How to use ones binary on another computer</b>?
+**The Problem: How to use ones binary on another computer?**
 
 This problem has been discussed [several times](https://drewdevault.com/dynlib.html), by [several people](https://news.ycombinator.com/item?id=23654353), and at this point also proves [the cave-allegory](https://en.wikipedia.org/wiki/Allegory_of_the_cave). It also serves to show a growing trend in the today's software industry, of solving problems with bigger problems. Let's start with the more idiotic solutions, going down to the more sensible ones.
 
-* Snap Packages: One of the sewage spill's from Canonical (the guys that make Ubuntu and [a bunch of annoying questions](https://ubuntu.com/blog/written-interviews)). Described as: <i>"Snaps are a secure and scalable way to embed applications on Linux devices. A snap is an application containerised with all its dependencies. A snap can be installed using a single command on any device running Linux. With snaps, software updates are automatic and resilient. Applications run fully isolated in their own sandbox, thus minimising security risks."</i>. Snap packages require a lot of infrastructure to be present in the host system to even work. That includes a **daemon(3)**, xdg-desktop extensions, kernel modules, and more. Snaps are also tightly coupled to the Ubuntu ecosystem. Snaps also break what they package [^1].
-* Flatpaks: Self entitled <i>"the future of application distribution"</i>. Flatpaks are similar to Snaps, but, less bad, i.e., they use the Linux namespaces for sandboxing, opposed to reinventing the wheel like Snaps do with AppArmor. Still a terrible idea for package distribution.
-* AppImages: Is a self-sufficient runtime that bundles the program dependencies and does not depend on any host machinery to work (they kinda do since the runtime is dynamically linked against glibc, but let's ignore that for now). It's a valid solution for the problem, but, limited in some ways.
+* [Snap Packages](https://snapcraft.io/): One of the sewage spill's from Canonical (the guys that make Ubuntu and [a bunch of annoying questions](https://ubuntu.com/blog/written-interviews)). Described as:
+
+    > Snaps are a secure and scalable way to embed applications on Linux devices. A snap is an application containerised with all its dependencies. A snap can be installed using a single command on any device running Linux. With snaps, software updates are automatic and resilient. Applications run fully isolated in their own sandbox, thus minimising security risks.
+
+    Snap packages require a lot of infrastructure to be present in the host system to even work. That includes a **daemon(3)**, xdg-desktop extensions, kernel modules, and more. Snaps are also tightly coupled to the Ubuntu ecosystem. Snaps also break what they package[^1].
+* [Flatpaks](https://www.flatpak.org/): Self-entitled:
+    > The future of apps on Linux
+
+    Flatpaks are similar to Snaps, but, less bad, i.e., they use the Linux namespaces for sandboxing, opposed to reinventing the wheel like Snaps do with AppArmor. Still a terrible idea for package distribution.
+* [AppImages](https://appimage.org/): Is a self-sufficient runtime that bundles the program dependencies and does not depend on any host machinery to work (they kinda do since the runtime is dynamically linked against glibc, but let's ignore that for now). It's a valid solution for the problem, but, limited in some ways.
 * Package everything yourself (also known as static linking with extra steps): This one is similar to the idea of AppImages, but, instead, you do the hard work.
 * Static linking: Just static link everything. Will work everywhere, most of the time.
 
 In all cases we see that all dependencies need to be in the final bundle -- in the final package. If that is the case, I'll raise the argument: Why we don't just statically link everything?
 
-> <b>The future is the past, now!</b>
+**The future is the past, now!**
 
 There are two reasons that I can think static linkage is not more common today. The first one is that most applications depend on glibc, which is a pain to statically link. The second one is a misconception tha static linked programs will use more disk space and memory. A third argument could be made that updating existent tooling and build systems to support static linkage or new binary file format is too costly.
 
