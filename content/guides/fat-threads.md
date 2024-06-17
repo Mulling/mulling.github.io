@@ -6,11 +6,11 @@ draft: false
 description: Sandboxing of dinamicaly bound symbols.
 ---
 
-The POSIX standard lacks in functionality for run-time isolation of dynamically bound symbols, i.e., **dlopen** and **dlsym** can, and will, crash your programs. Being from symbol collision, to crashes from the execution of dynamically loaded code. Meaning, programs that are extendable through plugins or use a cryptographic API such as PKCS #11 are at mercy of third-party developers.
+The POSIX standard lacks in functionality for run-time isolation of dynamically bound symbols, i.e., **dlopen** and **dlsym** can, and will, crash your programs. Being from symbol collisions, to crashes from the execution of dynamically loaded code. Meaning, programs that are extendable through plugins or use a cryptographic API such as PKCS #11 are at mercy of third-party developers.
 
 Library interoperability of DSO's which link against anything that uses **pthreads** or even **glibc** is delicate at best. The linker might burn everything down when resolving weak symbols, or, the program might crash when execution of loaded code assumes that some global state is set.
 
-The most common problem -- symbol colision -- was somewhat fixed with the introcution of **RTLD_DEEPBIND**. Later, Collabora (Valve) introduced **dlmopen(2)** with the goal of loading more than one of the same DSO in the same program. Still, the loaded code can crash and bring the program down.
+The most common problem -- symbol colision -- was somewhat fixed with the introcution of **RTLD_DEEPBIND**. Later, Collabora (Valve) introduced **dlmopen(2)** with the goal of loading more than one of the same DSO in the same program [^1]. Still, the loaded code can crash and bring the program down.
 
 Take for instance the program bellow, function {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}} calls an illegal user-space instruction, terminating the program:
 ```c
@@ -21,7 +21,7 @@ void foo() {
 
 Let's turn our program into a shared library:
 ```shell {linenos=false}
-$ gcc -shared l.c -o l.so -fpic
+$ gcc -shared lib.c -o lib.so -fpic
 ```
 
 Now, we can load the DSO with {{< highlight c "linenos=inline,hl_inline=true" >}}dlopen("./lib.so", RTLD_NOW){{< / highlight >}} and bind the symbol to a local function pointer with {{< highlight c "linenos=inline,hl_inline=true" >}}void (*foo)() = dlsym(handle, "foo"){{< / highlight >}}. See below:
@@ -58,11 +58,10 @@ $ ./main
 Segmentation fault
 ```
 
-As hinted before, the question here is, how can we safely call {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}}, without it terminating our program?
+As hinted before, the question here is, **how can we safely call {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}}, without it terminating our program**? [^2]
 
-There's also the problem of unloading the shared library. Non-static objects lifetimes, i.e., a thread created by the DSO, also makes impossible for one to call **dlclose(3)** on unknown shared library, that road leeds to undefined behaviour.
 
-The common way to approach this is to **fork(2)** **exec(3)**, perform the dynamic binding work in the child, and when the work is done, kill the child. For this, two binaries are necessary, which can be achieved by means of embedding one binary in another and using **memfd_create(2)** + **fexecve(2)**; or by loading a binary form a file and **fexecve(2)'ing** it (this is necessary to verify the programs hash and avoid security problems, but no one cares about that). This solution is, however, not portable.
+The only way to approach this is to **fork(2)** **exec(3)**, perform the dynamic binding work in the child, and when the work is done, kill the child. For this, two binaries are necessary, one for the program and one for loading. This can be achieved by means of embedding one binary in another and using **memfd_create(2)** + **fexecve(2)**; or by loading a binary form a file and **fexecve(2)'ing** it (necessary to verify the program's hash and avoid security problems, but no one cares about that). This solution is, however, not portable.
 
 Let's explore what happens if we try to deviate from this. To **fork(2)**, without **exec(3)**. Bellow is an assert of that (for brevity, and from now on, I've omitted all the error handling code):
 ```c
@@ -222,3 +221,7 @@ int main() {
 The first step is allocate a stack for your fat thread, this is done with {{<highlight c "linenos=inline,hl_inline=true">}}mmap(NULL, 1024 << 10, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0){{</highlight>}}. The important bits are **PROT_READ**, **PROT_WRITE**, **MAP_PRIVATE**, and **MAP_ANONYMOUS**. Contrary of common sense, **MAP_STACK** does nothing. Now, calling {{<highlight c "linenos=inline,hl_inline=true">}}clone(fn, (t = s + (1024 << 10)), SIGCHLD, NULL){{</highlight>}}. The important bits for clone are **SIGCHLD**, so the parent can know when the fat thread terminates. This seems to solve our problems, but, in the end, we are essentially forking we still need to exec. There is no way for the current Linux linker/loader to pull only the needed symbols when cloning. The whole image is copied over. For a hack, the binary could be made into a executable DSO, loaded lazily with **dlmopen(3)** + **RTLD_LAZY**, then DSO binding performed inside the empty namespace.
 
 Ideally we need fork + exec isolation capabilities that only binds the needed dependencies of the entry point. This means, for the example above, we only need {{<highlight c "linenos=inline,hl_inline=true">}}fn(){{</highlight>}} and the whole cocofoni of things it bring from glibc. The initial ideal here was to hack something together to allow the Kernel to do that, but I haven't gotten to that YET. Stay tunned.
+
+[^1]: Useful when loading older games, you can read more about it [here](https://people.collabora.com/~vivek/dynamic-linking/segregated-dynamic-linking.pdf).
+
+[^2]: There's also the problem of unloading the shared library. Non-static objects lifetimes, i.e., a thread created by the DSO, also makes impossible for one to call **dlclose(3)** on  an unknown shared library, that road leeds to undefined behaviour. This is a problem that cannot be solved easily, a few standards (like PKCS #11) assign a finalize function to be called before unloading DSO.
