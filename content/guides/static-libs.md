@@ -8,7 +8,7 @@ description: "ldd: not a dynamic executable."
 
 **The Problem: How to use ones binary on another computer?**
 
-This problem has been discussed [several times](https://drewdevault.com/dynlib.html), by [several people](https://news.ycombinator.com/item?id=23654353), and at this point also proves [the cave-allegory](https://en.wikipedia.org/wiki/Allegory_of_the_cave). It also serves to show a growing trend in the today's software industry, of solving problems with bigger problems. Let's start with the more idiotic solutions, going down to the more sensible ones.
+This problem has been discussed several times, by several people, and at this point also proves the [cave-allegory](https://en.wikipedia.org/wiki/Allegory_of_the_cave). It also serves to show a growing trend in the today's software industry -- of solving problems with bigger problems. Let's start with the more idiotic solutions, going down to the more sensible ones.
 
 * [Snap Packages](https://snapcraft.io/): One of the sewage spill's from Canonical (the guys that make Ubuntu and [a bunch of annoying questions](https://ubuntu.com/blog/written-interviews)). Described as:
 
@@ -29,11 +29,11 @@ In all cases we see that all dependencies need to be in the final bundle -- in t
 
 There are two reasons that I can think static linkage is not more common today. The first one is that most applications depend on glibc, which is a pain to statically link. The second one is a misconception tha static linked programs will use more disk space and memory. A third argument could be made that updating existent tooling and build systems to support static linkage or new binary file format is too costly.
 
-As a practical exercise let's compare a dynamic and a static version of the same application. The application we are going to compare is **st(1)**, a simple terminal that is complex enough to have a decent amount of dynamic dependencies. For the comparison we are going to use **ldd(1)**, **pmap(1)**, and **top(1)**, and are mainly going to be looking at memory mappings and memory usage.
+As a practical exercise let's compare a dynamic and a static version of the same application. The application we are going to compare is **st(1)**, a simple terminal that is complex enough to have a decent amount of dynamic dependencies (listed bellow). For the comparison we are going to use **ldd(1)**, **pmap(1)**, and **top(1)**, and are mainly going to be looking at memory mappings and memory usage.
 
-Source code and instructions on how to compile each version can be found [here](https://github.com/Mulling/st). I further encourage the reader to do so and share the static version with their friends, just like the 60's.
+Source code and instructions on how to compile each version can be found [here](https://github.com/Mulling/st). I further encourage the reader to do so and share the static version with their friends.
 
-Lets analyse the first version, dynamic linked st (st-dyn). Below is the output of **ldd(1)**, which displays all the dynamic dependencies of a program:
+Below is the output of **ldd(1)**, which displays all the dynamic dependencies of a program:
 
 ```shell {linenos=false}
 $ ldd st-dyn
@@ -147,4 +147,4 @@ Summing things up in the table below (take the values shown here for what they a
 +--------------------------+------- +-----------+
 ```
 
-[^1]: For instance -- in snap packages -- the communication between browser extensions and a native modules happens through the xdg-desktop-portal. Normally, communication between the browser and the native module happens using a simple **stdin(3)** to **stdout(3)** **pipe(3)**. If your system is older and has an older version of xdg-desktop-portal that does not support the protocol which handles browser to native module communication, it simply won't work.
+[^1]: In snap packages, the communication between browser extensions and a native modules happens through the xdg-desktop-portal. Normally, communication between the browser and the native module happens using a simple **stdin(3)** to **stdout(3)** **pipe(3)**. If your system is older and has an older version of xdg-desktop-portal that does not support the protocol which handles browser to native module communication, it simply won't work.
