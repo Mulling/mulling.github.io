@@ -125,7 +125,7 @@ void foo() {
 }
 ```
 
-We loop through the first 256 file descriptors testing if they are readable, (recall that **fork(2)** copies the state of each file descriptors offset, we need to reset it by using {{<highlight c "linenos=inline,hl_inline=true">}}lseek(i, 0, SEEK_SET){{</highlight>}}). We set **O_NONBLOCK** with {{<highlight c "linenos=inline,hl_inline=true">}}fcntl(i, F_SETFL, O_NONBLOCK){{</highlight>}}, as to not block on a empty pipe. Below is our main block, updated to create a file that holds some data for testing purposes:
+We loop through the first 256 file descriptors, testing if they are readable (recall that **fork(2)** copies the state of each file descriptors offset, we need to reset it by using {{<highlight c "linenos=inline,hl_inline=true">}}lseek(i, 0, SEEK_SET){{</highlight>}}). We set **O_NONBLOCK** with {{<highlight c "linenos=inline,hl_inline=true">}}fcntl(i, F_SETFL, O_NONBLOCK){{</highlight>}}, as to not block on a empty pipe. Below is our main block, updated to create a file that holds some data for testing purposes:
 ```c
 #include <dlfcn.h>
 #include <stdio.h>
