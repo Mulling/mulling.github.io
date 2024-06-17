@@ -6,9 +6,11 @@ draft: false
 description: Sandboxing of dinamicaly bound symbols.
 ---
 
-The POSIX standard lacks in functionality for run-time isolation of dynamically bound symbols, i.e., **dlopen** and **dlsym** can, and will, crash your programs. Being from symbol collision from statically (and dynamic) compiled libraries with other DSO's, to crashes from execution of dynamically loaded code. Meaning, programs that are extendable through plugins or use cryptographic API's such as PKCS #11 are at mercy of third-party developers.
+The POSIX standard lacks in functionality for run-time isolation of dynamically bound symbols, i.e., **dlopen** and **dlsym** can, and will, crash your programs. Being from symbol collision, to crashes from the execution of dynamically loaded code. Meaning, programs that are extendable through plugins or use a cryptographic API such as PKCS #11 are at mercy of third-party developers.
 
-Library interoperability of DSO's which link against anything that uses **pthreads** or **glibc** is delicate at best. The linker might also burn everything down when resolving weak symbols. **glibc** developers tried to fix this with **dlmopen(2)** and **RTLD_DEEPBIND**, which most of the time (this will make more sense later on).
+Library interoperability of DSO's which link against anything that uses **pthreads** or even **glibc** is delicate at best. The linker might burn everything down when resolving weak symbols, or, the program might crash when execution of loaded code assumes that some global state is set.
+
+The most common problem -- symbol colision -- was somewhat fixed with the introcution of **RTLD_DEEPBIND**. Later, Collabora (Valve) introduced **dlmopen(2)** with the goal of loading more than one of the same DSO in the same program. Still, the loaded code can crash and bring the program down.
 
 Take for instance the program bellow, function {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}} calls an illegal user-space instruction, terminating the program:
 ```c
@@ -56,11 +58,13 @@ $ ./main
 Segmentation fault
 ```
 
-As hinted before, the question here is, how can we safely call {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}}, without it terminating our program? There's also the problem of unloading the shared library. Non-static objects lifetimes, i.e., a thread created by the DSO, also makes impossible for one to call **dlclose(3)** on unknown shared library, that road leads to undefined behaviour.
+As hinted before, the question here is, how can we safely call {{<highlight c "linenos=inline,hl_inline=true">}}foo(){{</highlight>}}, without it terminating our program?
 
-The common paradigm is to **fork(2)** **exec(3)**, perform the dynamic binding work in the child, and when the work is done, kill the child. For this, two binaries are necessary, which can be achieved by means of embedding one binary in another and using **memfd_create(2)** + **fexecve(2)**; or by loading a binary form a file and **fexecve(2)'ing** it (this is necessary to verify the programs hash and avoid security problems, but no one cares about that). But, of course, this is also not portable.
+There's also the problem of unloading the shared library. Non-static objects lifetimes, i.e., a thread created by the DSO, also makes impossible for one to call **dlclose(3)** on unknown shared library, that road leeds to undefined behaviour.
 
-Let's explore what happens if we try to deviate from this (we will not dive into the problems with multithreaded programs and **fork(2)**). To **fork(2)**, without **exec(3)**. Bellow is an assert of that (for brevity, and from now on, I've omitted all the error handling code):
+The common way to approach this is to **fork(2)** **exec(3)**, perform the dynamic binding work in the child, and when the work is done, kill the child. For this, two binaries are necessary, which can be achieved by means of embedding one binary in another and using **memfd_create(2)** + **fexecve(2)**; or by loading a binary form a file and **fexecve(2)'ing** it (this is necessary to verify the programs hash and avoid security problems, but no one cares about that). This solution is, however, not portable.
+
+Let's explore what happens if we try to deviate from this. To **fork(2)**, without **exec(3)**. Bellow is an assert of that (for brevity, and from now on, I've omitted all the error handling code):
 ```c
 #include <dlfcn.h>
 #include <stdio.h>
@@ -95,7 +99,7 @@ Ok, we've got what we wanted, but, our program now resides at the limbo between 
 
 This will also happen if files are not marked with **FD_CLOEXEC** prior to **exec(3)**.
 
-And yes, we can do anything we want with the parents file descriptors, and if we are clever, structures in memory also ;). Making some changes to our shared library to test the former.
+And yes, we can do anything we want with the parents file descriptors, and if we are clever, structures in memory also. Making some changes to our shared library to test the former.
 ```c
 #include <fcntl.h>
 #include <stdio.h>
