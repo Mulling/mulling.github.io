@@ -1,11 +1,11 @@
 @font-face {
-    font-family: 'Consolas';
-    src:url("/fonts/consolas.ttf");
+    font-family: 'Comic Code';
+    src:url("/fonts/Comic Code.otf");
 }
 
 * {
-    font-size: 14pt;
-    font-family: Consolas;
+    font-size: 12pt;
+    font-family: Comic Code;
 }
 
 a:active  { color: #EDB32D }
