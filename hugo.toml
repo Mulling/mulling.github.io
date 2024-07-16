@@ -1,4 +1,4 @@
-baseURL = 'https://mulling.github.io'
+baseURL = 'https://hacking.tunalinux.org'
 languageCode = 'en-us'
 title = 'Kernel Hacking(7)'
 theme = 'tuna'
