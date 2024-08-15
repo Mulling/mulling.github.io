@@ -8,6 +8,6 @@ description: Mulling's blog
 
 > The mess we're in<br><span class="quote"> -- Armstrong, Joe</span>
 
-See [guides(7)](/guides) for a list of computer science related articles; in [projects(3)](/projects) you can find some cool projects.
+See [guides(7)](/guides) for a list of Kernel hacking guides; in [projects(3)](/projects) you can find some cool projects.
 
 You can find me on [github(7)](https://github.com/mulling), [linkedin(7)](https://linkedin.com/in/mulling) and [twitter(7)](https://twitter.com/coredumpie).

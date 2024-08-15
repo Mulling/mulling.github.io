@@ -40,6 +40,14 @@ body {
     overflow-y: hidden;
 }
 
+nav .title-right {
+    text-align: right;
+}
+
+nav .title-center {
+    text-align: center;
+}
+
 nav {
     display: flex;
     justify-content: space-between;
@@ -75,6 +83,7 @@ span.quote {
 
 .footer > span:nth-child(3) {
     justify-content: end;
+    text-align: right;
 }
 
 .footer > span {
