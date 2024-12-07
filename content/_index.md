@@ -10,4 +10,4 @@ description: Mulling's blog
 
 See [guides(7)](/guides) for a list of Kernel hacking guides; in [projects(3)](/projects) you can find some cool projects. The views and opinions expressed here are my own and do not reflect those of my employer.
 
-You can find me on [github(7)](https://github.com/mulling), [linkedin(7)](https://linkedin.com/in/mulling) and [bluesky(7)](https://bsky.app/profile/tunalinux.org).
+You can find me on [github(7)](https://github.com/mulling), [linkedin(7)](https://linkedin.com/in/mulling) and [bluesky(7)](https://bsky.app/profile/tunalinux.org). For sensitive communication [PGP(1)](/pgp).
