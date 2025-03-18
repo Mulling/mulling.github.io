@@ -14,16 +14,14 @@ This problem has been discussed several times, by several people, and at this po
 
     > Snaps are a secure and scalable way to embed applications on Linux devices. A snap is an application containerised with all its dependencies. A snap can be installed using a single command on any device running Linux. With snaps, software updates are automatic and resilient. Applications run fully isolated in their own sandbox, thus minimising security risks.
 
-    Snap packages require a lot of infrastructure to be present in the host system to even work. That includes a **daemon(3)**, xdg-desktop extensions, kernel modules, and more. Snaps are also tightly coupled to the Ubuntu ecosystem. Snaps also break what they package[^1].
+    Snap packages require a lot of infrastructure to be present in the host system to even work. That includes a **daemon(3)**, xdg-desktop extensions, kernel modules, and more. Snaps are also tightly coupled to the Ubuntu ecosystem. Snaps also break what they package. [^1]
 * [Flatpaks](https://www.flatpak.org/): Self-entitled:
     > The future of apps on Linux
 
-    Flatpaks are similar to Snaps, but, less bad, i.e., they use the Linux namespaces for sandboxing, opposed to reinventing the wheel like Snaps do with AppArmor. Still a terrible idea for package distribution.
+    Flatpaks are similar to Snaps, but, less bad. Still a terrible idea for package distribution.
 * [AppImages](https://appimage.org/): Is a self-sufficient runtime that bundles the program dependencies and does not depend on any host machinery to work (they kinda do since the runtime is dynamically linked against glibc, but let's ignore that for now). It's a valid solution for the problem, but, limited in some ways.
 * Package everything yourself (also known as static linking with extra steps): This one is similar to the idea of AppImages, but, instead, you do the hard work.
-* Static linking: Just static link everything. Will work everywhere, most of the time.
-
-In all cases we see that all dependencies need to be in the final bundle -- in the final package. If that is the case, I'll raise the argument: Why we don't just statically link everything?
+* Static linking: Just static link everything. Will work everywhere, most of the time. [^2]
 
 **The future is the past, now!**
 
@@ -114,7 +112,7 @@ mapped: 7364K    writeable/private: 2308K    shared: 1068K
 
 We can see a LOT fewer pages mapped, of which only 3 are `r-x--` (executable). We can also see the same mapped fonts as the dynamic version. There's also a decrease in mapped memory usage, 7364K. Private data remain mostly the same and shared data follows this as well. This however does not paint the hole picture.
 
-Let's look at the output of **top(1)**, first for st-dyn. **top(1)** will give us a different metrics, since it accounts memory usage differently. It also will show us resident memory use -- which more closely matches what you would expect for the program memory usage.
+Let's look at the output of **top(1)**, first for st-dyn. **top(1)** will give us different metrics, since it accounts memory usage differently. It also will show us resident memory use -- which more closely matches what you would expect for the program memory usage.
 
 ```shell {linenos=false}
 $ top -b | grep -e "PID|st-dyn"
@@ -148,3 +146,5 @@ Summing things up in the table below (take the values shown here for what they a
 ```
 
 [^1]: In snap packages, the communication between browser extensions and a native modules happens through the xdg-desktop-portal. Normally, communication between the browser and the native module happens using a simple **stdin(3)** to **stdout(3)** **pipe(3)**. If your system is older and has an older version of xdg-desktop-portal that does not support the protocol which handles browser to native module communication, it simply won't work.
+
+[^2]: This will not work if the Kernel was not built without support for a feature required by the binary.
