@@ -61,5 +61,5 @@ unsafe = true
 [services]
     [services.instagram]
         disableInlineCSS = true
-    [services.twitter]
+    [services.x]
         disableInlineCSS = true

@@ -3,7 +3,7 @@ author: "Mülling"
 title: "make-less-noise(1)"
 date: 2025-04-26T19:34:00-03:00
 draft: false
-description: Reducing the noise of make(1)
+description: Reducing the noise of make(1).
 ---
 
 If you ever compiled the Linux Kernel, you will notice the distinct make output:
