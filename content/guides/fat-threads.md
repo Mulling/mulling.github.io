@@ -98,7 +98,7 @@ Ok, we've got what we wanted, but, our program now resides at the limbo between 
 
 This will also happen if files are not marked with **FD_CLOEXEC** prior to **exec(3)**.
 
-And yes, we can do anything we want with the parents file descriptors, and if we are clever, structures in memory also. Making some changes to our shared library to test the former.
+And yes, we can do anything we want with the parents file descriptors, and if we are [clever](https://github.com/mulling/non-static-dso), structures in memory also. Making some changes to our shared library to test the former.
 ```c
 #include <fcntl.h>
 #include <stdio.h>
